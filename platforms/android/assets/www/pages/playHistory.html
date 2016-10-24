@@ -1,0 +1,25 @@
+<div class="container" data-ng-controller="playlistController">
+    <h4>Play history</h4>
+    <p>Below you'll find the tracks you have listened to in current/last session. If you decide to clear all tracks in the playlist you need to update the list too.</p>
+    <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Track</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="track in localArray track by $index">
+        <td music-player='play' add-song='track'>{{track.title}}</td>
+        <td ng-click="delete($index)"><button class="btn btn-delete"><span class="glyphicon glyphicon-remove-sign"> Remove</span></td>
+        <td>
+    </tr>
+
+</tbody>
+</table>
+    <button type="button" class="btn btn-delete" ng-click="clearStorage()" clear-playlist><i class="fa fa-trash"></i> Clear All</button>
+
+    <button class="btn btn-delete" ng-click="reloadRoute()"><i class="fa fa-refresh"></i> Update list</button>
+<hr>
+
+</div>

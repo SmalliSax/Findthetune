@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp" ng-controller="MainController">
+
+<head>
+  <meta charset="UTF-8">
+  <title>FTT - Findthetune</title>
+  <link rel="stylesheet" type="text/css" href="css/custom.css">
+  <link rel="stylesheet" href="css/font-awesome.css" type="text/css">
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="css/toastr.min.css">
+  <link rel="stylesheet" type="text/css" href="css/geolocation.css">
+  
+
+  <script src="js/jquery-2.1.4.min.js"></script>
+  <script src="js/toastr.min.js"></script>
+  <script src="js/angular.js"></script>
+  <script src="app.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="bower_components/angular-soundmanager2/dist/angular-soundmanager2.js"></script>
+  <script src="js/ngroute.min.js"></script>
+  <script src="js/custom.js"></script>
+  <script src="js/dirPagination.js"></script>
+  <script src="js/index.js"></script>
+
+
+</head>
+
+<body ng-cloak>
+
+  <div class="container-fluid" style="margin-top:170px;">
+
+    <div class="navbar navbar-inverse navbar-fixed-top" style="background-color: #3366cc;">
+     <div class="container">
+      <div class="navbar-header">
+        <div id="logoLinks">
+          <img src="img/logo.png"/>
+        </div>
+        <form class="navbar-form" role="search">
+          <div class="input-group">
+           <input type="text" ng-model="search" ng-click="select($event)" class="form-control" placeholder="Search for track name" autofocus />
+           <div class="input-group-btn">
+            <button type="submit" class="btn btn-default" ng-click="change(); changeView('home')"><span class="glyphicon glyphicon-search"></span></button>
+          </div>
+        </div>
+        <p class="totalResults" data-ng-show="resultMessage">Returned {{details.total}} results ...</p>
+      </form>
+    </div>
+    <!--/.navbar-collapse -->
+  </div>
+</div>
+</div>
+<div class="container head-nav">
+  <div class="iconHead">
+    <li class="navIcon">       
+      <a href="#home"><i class="fa fa-home"></i><p class="link_title">Home</p></a>
+    </li>
+    <li class="navIcon"> 
+      <a href="#history" add-all="songs" data-play="false"><i class="fa fa-list-ul"></i><p class="link_title">Playlist</p></a>
+    </li>
+    <li class="navIcon"> 
+      <a href="#contact"><i class="fa fa-envelope"></i><p class="link_title">Contact</p></a>
+    </li>
+  </div>
+</div>
+<div style="clear:both;"></div>
+<hr>
+
+<div ng-view></div>
+
+<sound-manager></sound-manager>
+
+<div class="loadingIcon" data-ng-show="loading">
+ <span><img src="img/spin.gif" style="width:50px;"><br/>
+  <p> <strong><em>Finding your perfect music ...</em></strong></p>
+</span>
+</div>
+
+<div class="container" style="width:auto;">
+  <div class="col md-4">
+
+    <div ng-if="details.total > 5000">
+      Your search returned alot of results, try to narrow your search down with more keywords for example: <strong><em>{{search}} + another keyword</strong></em>
+    </div>
+
+    <hr>
+
+    <div dir-paginate="song in songs | itemsPerPage: pageSize" current-page="currentPage">
+      <div id="imageContainer">
+        <img ng-src="{{song.img}}" width="65" style="float: left;margin-right: 10px;">
+        <i class="fa fa-play-circle-o" id="playCircle" music-player="play" add-song="song"></i>
+      </div>
+      <p><strong> {{song.title}} - {{song.artist}}</strong><span class="smallDetails"> Label: {{song.lbl_fk}} / Album: {{song.alb_num}} / Track: #{{song.track_num}}</span>
+      </p>
+      <span class="trackDuration">{{song.track_dur}}</span>
+      <p class="trackDescription">{{song.track_descr}}</p>
+      <p ng-if="!song.track_descr" class="trackDescription">No description available</p>
+      <hr>
+    </div>
+
+    <div ng-if="details.total == '0'">
+      No results found.
+    </div>
+  </div>
+</div>
+<div ng-controller="PaginationController" class="other-controller">
+  <div class="text-center">
+    <dir-pagination-controls boundary-links="true" on-page-change="pageChangeHandler(newPageNumber)" template-url="dirPagination.tpl.html"></dir-pagination-controls>
+  </div>
+</div>
+
+
+
+<div id="popupWindow">
+  <p><strong>{{currentPlaying.title}}</strong><br/>
+    {{currentPlaying.artist}}</p>
+    <img ng-src="{{currentPlaying.img}}" width="80" style="margin-bottom:10px;">
+    <div class="Row">
+      <div class="Column">{{ currentPostion }}</div>
+      <div class="ColumnMiddle"><div class="seekBase" seek-track>
+        <div class="seekLoad" ng-style="{width : ( progress + '%' ) }"></div>
+      </div>
+    </div>
+    <div class="Column">{{ currentDuration }}</div>
+  </div>
+  <div class="RowIcons">
+    <div class="Column"><span prev-track><i class="fa fa-chevron-left"></i></span></div>
+    <div class="Column"><span play-pause-toggle data-play="" data-pause=""><i class="fa fa-play"></i></span></div>
+    <div class="Column"><span next-track><i class="fa fa-chevron-right"></i></span></div>
+  </div>
+  <div class="playlist">
+    <h5 class="playlistHeadline">Current Playlist</h5>
+    <ul>
+      <li ng-repeat="song in playlist">
+        <a play-from-playlist='song'>{{ song.title }} - <span class="playlistTrackDetail"> {{song.lbl_fk}} / {{song.alb_num}} / #{{song.track_num}}</span> <br/> {{ song.artist }}</a>
+        <span class="trackDurationPlaylist">{{song.track_dur}}</span>
+        <span ng-if="currentPlaying.id == song.id"><strong>IN PLAY</strong></span>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+   <div id="footerPlay">
+     <div class='toggleHolder'>
+      <span class='toggler'><i class="fa fa-chevron-up"></i></span>
+    </div>
+
+    <span play-pause-toggle data-play="" data-pause="" class="isTrackPlaying"><i class="fa fa-play"></i></span>
+
+    <p class="playingCurrent"style="color:#fff";>
+      Currently playing: <br/><strong>{{currentPlaying.title}}</strong> 
+    </p>   
+    <div id="playedTracks">
+      <span class="repeatTrack"><i class="fa fa-repeat" repeat-music></i></span>
+    </div>
+
+  </div>
+</div>
+
+</footer>
+
+</body>
+
+</html>

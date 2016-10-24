@@ -1,0 +1,20 @@
+<div id="custom-modal">
+  <div id="overlay" ng-controller="GeoController">
+  	<h4><strong>Your country location:</strong></h4> <reverse-geocode ng-if="lat && lng" lat="{{lat}}" lng="{{lng}}"></reverse-geocode>
+  	<strong>Latitude:</strong> {{lat | number:2}} <br>
+  	<strong>Longitude:</strong> {{lng | number:2}} <br>
+	<hr>
+	<div class="supervisorDisplay">
+  	<h4><strong>Supervisors in Denmark</strong></h4>
+  	<img src="img/Lars.jpg" class="denmarkImg">
+  	<div class="larsText">
+  	<p><strong>Name: </strong>Lars Bisgaard</p>
+  	<p><strong>Email: </strong>lars@apollomusic.dk</p>
+  	<p><strong>Phone: </strong> 0045 32 96 66 73</p>
+  </div>
+  <div style="clear:both;"></div>
+</div>
+      <a class="btn btn-primary" href ng-click="close()">Close</a>
+  </div>
+  <div id="fade"></div>
+</div>
